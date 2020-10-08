@@ -207,6 +207,7 @@ class TensorPipeAgent : public RpcAgent {
   void pipeWrite(
       const std::shared_ptr<tensorpipe::Pipe>&,
       Message&& message,
+      std::vector<c10::DeviceIndex>&& devices,
       std::function<void(const tensorpipe::Error&)>);
 
   // Callback of listener accept()
@@ -232,6 +233,10 @@ class TensorPipeAgent : public RpcAgent {
   void trackNetworkError(
       uint64_t requestSize,
       const std::string& destWorkerName);
+
+  inline std::vector<c10::DeviceIndex> getDevicesForTensors(
+      const std::string& remoteName,
+      const Message& message) const;
 
   // When a request+response completes, we need to mark the future message as
   // complete. However, if its timeout has already expired, it already has an
